@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>花玲Karin的歌单</title>
+  <link rel="icon" href="assets/images/花玲头像v20250817.jpg" type="image/jpeg">
+  <!-- 样式文件 -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 页面头部 -->
+    <header>
+      <div class="header-content">
+        <h1 class="subtitle">花玲Karin的歌单</h1>
+        <div class="stats">
+          <div class="stat-item">
+            <i class="fas fa-music"></i>
+            <span id="song-count">0 首歌曲</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-microphone-alt"></i>
+            <span id="artist-count">0 位歌手</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 控制区域 -->
+    <div class="controls">
+      <!-- 搜索框 -->
+      <div class="search-box">
+        <form id="search-form" onsubmit="return false;">
+          <input type="text" id="search-input" placeholder="搜索歌曲、歌手...">
+          <button type="submit" id="search-button">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      </div>
+      
+      <!-- 过滤器 -->
+      <div class="filters">
+        <div class="filter-group">
+          <select id="language-filter">
+            <option value="">所有语言</option>
+            <option value="中文">中文</option>
+            <option value="英语">英语</option>
+            <option value="日语">日语</option>
+            <option value="韩语">韩语</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <select id="genre-filter">
+            <option value="">所有风格</option>
+            <option value="流行">流行</option>
+            <option value="民粹">民粹</option>
+            <option value="古风">古风</option>
+            <option value="儿歌">儿歌</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 歌单表格 -->
+    <div class="table-container">
+      <table id="playlist-table">
+        <thead>
+          <tr>
+            <th data-sort="title">歌名<i class="sort-icon"></i></th>
+            <th data-sort="artist">歌手<i class="sort-icon"></i></th>
+            <th data-sort="language">语言<i class="sort-icon"></i></th> 
+            <th data-sort="genre">风格<i class="sort-icon"></i></th>
+            <th data-sort="audio">歌切<i class="sort-icon"></i></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

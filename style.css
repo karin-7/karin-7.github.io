@@ -1,0 +1,291 @@
+/* 全局变量定义 */
+:root {
+    --primary: #ff69b4;          /* 主要颜色-粉色 */
+    --secondary: #ff91c7;        /* 次要颜色-亮粉色 */
+    --accent: #f72585;           /* 强调色 */
+    --light: #f8f9fa;           /* 浅色背景 */
+    --dark: #212529;            /* 深色文字 */
+    --gray: #6c757d;            /* 灰色 */
+    --success: #4cc9f0;         /* 成功状态色 */
+    --card-bg: rgba(255, 255, 255, 0.92); /* 卡片背景色 */
+}
+
+/* 基础样式重置 */
+* { 
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    line-height: 1.6;
+    color: var(--dark);
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 头部样式 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 10px 10px;
+    background: rgba(255, 182, 193, 0.85);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.header-content { position: relative; z-index: 1; }
+
+.subtitle {
+    font-size: 2.7rem;
+    margin: 5px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+}
+
+/* 统计信息样式 */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 5px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+}
+
+/* 控制区域样式 */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(5px);
+}
+
+/* 搜索框样式 */
+.search-box {
+    flex: 1;
+    min-width: 300px;
+    position: relative;
+}
+
+.search-box form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#search-input {
+    width: 100%;
+    padding: 16px 25px;
+    padding-right: 50px;
+    border: 2px solid #ddd;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#search-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary);
+    border: none;
+    color: white;
+    padding: 12px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#search-button:hover { background: var(--secondary); }
+
+/* 过滤器样式 */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-group {
+    min-width: 180px;
+}
+
+select {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* 表格样式 */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* 表格列宽样式 */
+table {
+	table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* 固定列宽 */
+#playlist-table th:nth-child(1) { width: 45%; }  /* 歌名列 */ 
+#playlist-table th:nth-child(2) { width: 20%; }  /* 歌手列 */ 
+#playlist-table th:nth-child(3) { width: 10%; }  /* 语言列 */
+#playlist-table th:nth-child(4) { width: 10%; }  /* 风格列 */
+#playlist-table th:nth-child(5) { width: 15%; }  /* 歌切列 */
+
+th {
+    background-color: rgba(255, 182, 193, 0.85);
+    padding: 18px 25px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+td {
+    padding: 16px 25px;
+    border-bottom: 1px solid #eee;
+    font-size: 1.05rem;
+	word-wrap: break-word;      /* 允许长单词换行 */
+    word-break: break-all;      /* 允许所有文字换行 */
+    white-space: normal;        /* 允许自动换行 */
+    height: auto;               /* 自动调整高度 */
+    min-height: 60px;          /* 设置最小高度 */
+}
+
+/* 添加排序图标样式 */
+th {
+	position: relative;
+	cursor: pointer;
+	user-select: none;
+}
+
+.sort-icon {
+	margin-left: 8px;
+	font-size: 0.8em;
+	opacity: 0.7;
+	transition: all 0.3s;
+}
+
+th:hover .sort-icon {
+	opacity: 1;
+}
+
+.sort-icon.active {
+	opacity: 1;
+	color: var(--accent);
+}
+
+.sort-icon.asc::after {
+	content: "↑";
+}
+
+.sort-icon.desc::after {
+	content: "↓";
+}
+
+.song-title {
+    display: flex;
+    align-items: flex-start;   /* 顶部对齐 */
+    gap: 12px;
+}
+
+.song-title span {
+    word-wrap: break-word;     /* 允许长单词换行 */
+    word-break: break-all;     /* 允许所有文字换行 */
+}
+
+tr:hover td { background-color: rgba(248, 250, 253, 0.8); }
+
+/* 歌曲标题样式 */
+.song-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.song-title i {
+    color: var(--primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.song-title span {
+    font-weight: 500;
+}
+
+/* 语言标签样式 */
+.language-tag {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.chinese {
+    background: #ffecec;
+    color: #ff4d4f;
+}
+
+.english {
+    background: #e6f7ff;
+    color: #1890ff;
+}
+
+.japanese {
+    background: #f6ffed;
+    color: #52c41a;
+}
+
+.korean {
+    background: #fff7e6;
+    color: #fa8c16;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+    .controls { flex-direction: column; }
+    .search-box { min-width: 100%; }
+    .stats { flex-wrap: wrap; }
+    th, td { padding: 14px 18px; }
+}
