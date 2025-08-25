@@ -274,13 +274,12 @@ body {
 }
 
 .playlist-table {
-  width: 100%;
+  min-width: 860px;
   border-collapse: collapse;
   table-layout: fixed; /* 固定布局，让列宽按设置生效 */
 }
 
 .playlist-table tr{
-    width: 100%;
     table-layout: fixed;
 }
 
