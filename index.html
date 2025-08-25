@@ -3,80 +3,762 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="花玲Karin的个人歌单管理页面">
   <title>花玲Karin的歌单</title>
   <link rel="icon" href="assets/images/花玲头像v20250817.jpg" type="image/jpeg">
-  <!-- 样式文件 -->
   <link rel="stylesheet" href="style.css">
+  <!-- 第三方库 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="page-playlist">
   <div class="container">
     <!-- 页面头部 -->
-    <header>
-      <div class="header-content">
-        <h1 class="subtitle">花玲Karin的歌单</h1>
-        <div class="stats">
-          <div class="stat-item">
-            <i class="fas fa-music"></i>
-            <span id="song-count">0 首歌曲</span>
-          </div>
-          <div class="stat-item">
-            <i class="fas fa-microphone-alt"></i>
-            <span id="artist-count">0 位歌手</span>
-          </div>
+    <header class="page-header">
+      <h1 class="page-title">花玲Karin的歌单</h1>
+      <div class="header-stats">
+        <div class="stat-item">
+          <i class="fas fa-music stat-icon"></i>
+          <span id="song-count" class="stat-value">0 首歌曲</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-microphone-alt stat-icon"></i>
+          <span id="artist-count" class="stat-value">0 位歌手</span>
         </div>
       </div>
     </header>
 
-    <!-- 控制区域 -->
-    <div class="controls">
-      <!-- 搜索框 -->
-      <div class="search-box">
-        <form id="search-form" onsubmit="return false;">
-          <input type="text" id="search-input" placeholder="搜索歌曲、歌手...">
-          <button type="submit" id="search-button">
-            <i class="fas fa-search"></i>
-          </button>
-        </form>
-      </div>
-      
-      <!-- 过滤器 -->
-      <div class="filters">
-        <div class="filter-group">
-          <select id="language-filter">
+    <!-- 页面内容 -->
+    <main class="page-content">
+      <!-- 搜索和过滤器 -->
+      <section class="control-panel">
+        <!-- 搜索框 -->
+        <div class="control-container">
+            <form id="search-form" class="search-form" onsubmit="return false;">
+              <div class="input-group">
+                <div class="search-input">
+                  <div class="input-with-clear">
+                    <input type="text" id="search-input" class="search-input" placeholder="搜索歌曲、歌手..." aria-label="搜索歌曲">
+                    <button type="button" class="clear-button">&times;</button>
+                  </div>
+                </div>
+                <button type="submit" id="search-button" class="search-button" aria-label="执行搜索">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </form>
+        </div>
+        <!-- 过滤器 -->
+        <div class="control-container">
+          <select id="language-filter" class="form-select">
             <option value="">所有语言</option>
             <option value="中文">中文</option>
             <option value="英语">英语</option>
             <option value="日语">日语</option>
             <option value="韩语">韩语</option>
+            <option value="未知">未知</option>
           </select>
-        </div>
-        <div class="filter-group">
-          <select id="genre-filter">
+          <select id="genre-filter" class="form-select">
             <option value="">所有风格</option>
             <option value="流行">流行</option>
-            <option value="民粹">民粹</option>
+            <option value="民谣">民谣</option>
             <option value="古风">古风</option>
             <option value="儿歌">儿歌</option>
+            <option value="未知">未知</option>
           </select>
+        </div>
+      </section>
+      <!-- 操作按钮区域 -->
+      <section class="action-panel">
+        <button id="add-song" class="action-button" aria-label="添加歌曲">
+          <i class="fas fa-plus button-icon"></i>
+          <span class="button-text">添加歌曲</span>
+        </button>
+        <button id="advanced-search" class="action-button" aria-label="高级检索">
+          <i class="fas fa-search-plus button-icon"></i>
+          <span class="button-text">高级检索</span>
+        </button>
+        <button id="statistics" class="action-button" aria-label="统计信息">
+          <i class="fas fa-chart-pie button-icon"></i>
+          <span class="button-text">统计信息</span>
+        </button>
+        <button id="import-playlist" class="action-button" aria-label="导入歌单">
+          <i class="fas fa-upload button-icon"></i>
+          <span class="button-text">导入歌单</span>
+        </button>
+        <button id="export-playlist" class="action-button" aria-label="导出歌单">
+          <i class="fas fa-download button-icon"></i>
+          <span class="button-text">导出歌单</span>
+        </button>
+        <button id="clear-playlist" class="action-button" aria-label="清空歌单">
+          <i class="fas fa-trash button-icon"></i>
+          <span class="button-text">清空歌单</span>
+        </button>
+        <button id="table-settings" class="action-button" aria-label="表格设置">
+          <i class="fas fa-cog button-icon"></i>
+          <span class="button-text">表格设置</span>
+        </button>
+      </section>
+      <!-- 歌单表格 -->
+      <section class="table-panel">
+        <table id="playlist-table" class="playlist-table">
+          <thead class="playlist-header">
+            <tr>
+              <th class="other-column">
+                <span class="column-header col-index">序号</span>
+              </th>
+              <th data-sort="title" class="sortable-column">
+                <span class="column-header col-title">歌名</span>
+                <i class="fas fa-sort sort-icon"></i>
+              </th>
+              <th data-sort="artist" class="sortable-column">
+                <span class="column-header  col-performer">歌手</span>
+                <i class="fas fa-sort sort-icon"></i>
+              </th>
+              <th data-sort="language" class="sortable-column">
+                <span class="column-header col-language">语言</span>
+                <i class="fas fa-sort sort-icon"></i>
+              </th> 
+              <th data-sort="genre" class="sortable-column">
+                <span class="column-header col-genre">风格</span>
+                <i class="fas fa-sort sort-icon"></i>
+              </th>
+              <th data-sort="performance" class="sortable-column">
+                <span class="column-header col-count">次数</span>
+                <i class="fas fa-sort sort-icon"></i>
+              </th>
+              <th data-sort="date" class="sortable-column">
+                <span class="column-header col-date">最近演唱</span>
+                <i class="fas fa-sort sort-icon"></i>
+              </th>
+              <th class="other-column col-actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="playlist-body" class="playlist-body">
+            <!-- 动态内容将在这里呈现 -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <!-- 添加歌曲表单弹框 -->
+  <div class="modal-overlay" id="add-song-modal">
+    <!-- 模态框 -->
+    <div class="modal">
+      <!-- 模态框头部 -->
+      <div class="modal-header">
+        <h2 class="modal-title">添加歌曲</h2>
+        <button class="modal-close" id="modal-close-button">&times;</button>
+      </div>
+      <!-- 模态框主体内容 -->
+      <div class="modal-main">
+        <form id="song-form">
+          <!-- 基本信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">基本信息</h3>
+            <div class="form-group">
+              <label for="song-title" class="form-label required">歌曲名称</label>
+              <div class="input-with-clear">
+                <input type="text" id="song-title" class="form-input" placeholder="输入歌曲名称" required>
+                <button type="button" class="clear-button">&times;</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="song-language" class="form-label required">主要语言</label>
+              <select id="song-language" class="form-select" required>
+                <option value="">选择语言</option>
+                <option value="中文">中文</option>
+                <option value="英语">英语</option>
+                <option value="日语">日语</option>
+                <option value="韩语">韩语</option>
+                <option value="未知">未知</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- 别名部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">别名</h3>
+            <div id="aliases-container" class="array-container">
+              <!-- 别名项将通过JS动态添加 -->
+            </div>
+            <button type="button" class="add-array-button" id="add-alias">
+              <i class="fas fa-plus"></i> 添加别名
+            </button>
+          </div>
+          
+          <!-- 主创信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">主创信息</h3>
+            <div class="form-group">
+              <label class="form-label required">演唱者</label>
+              <div id="performers-container" class="array-container">
+                <div class="input-with-clear">
+                  <input type="text" class="form-input" name="performer" placeholder="输入演唱者姓名" required>
+                  <button type="button" class="clear-button">&times;</button>
+                </div>
+              </div>
+              <button type="button" class="add-array-button" id="add-performer">
+                <i class="fas fa-plus"></i> 添加演唱者
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">作词者</label>
+              <div id="lyricists-container" class="array-container">
+                <!-- 作词者项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-lyricist">
+                <i class="fas fa-plus"></i> 添加作词者
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">作曲者</label>
+              <div id="composers-container" class="array-container">
+                <!-- 作曲者项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-composer">
+                <i class="fas fa-plus"></i> 添加作曲者
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">编曲者</label>
+              <div id="arrangers-container" class="array-container">
+                <!-- 编曲者项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-arranger">
+                <i class="fas fa-plus"></i> 添加编曲者
+              </button>
+            </div>
+          </div>
+          
+          <!-- 分类信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">分类信息</h3>  
+            <div class="form-group">
+              <label class="form-label required">语言</label>
+              <div id="languages-container" class="array-container">
+                <!-- 语言项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-language">
+                <i class="fas fa-plus"></i> 添加语言
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">风格</label>
+              <div id="genres-container" class="array-container">
+                <!-- 风格项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-genre">
+                <i class="fas fa-plus"></i> 添加风格
+              </button>
+            </div>
+          </div>
+          
+          <!-- 视频信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">视频信息</h3>
+            <div class="form-group">
+              <label class="form-label">视频</label>
+              <div id="videos-container" class="array-container">
+                <!-- 视频项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-video">
+                <i class="fas fa-plus"></i> 添加视频
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">直播回放</label>
+              <div id="lives-container" class="array-container">
+                <!-- 直播回放项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" class="add-array-button" id="add-live">
+                <i class="fas fa-plus"></i> 添加直播回放
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">切片视频</label>
+              <div id="clips-container" class="array-container">
+                <!-- 切片视频项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="add-clip">
+                <i class="fas fa-plus"></i> 添加切片视频
+              </button>
+            </div>
+          </div>
+          
+          <!-- 备注部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">备注</h3>
+            <div class="form-group">
+              <label for="song-note" class="form-label">备注信息</label>
+              <textarea id="song-note" class="form-textarea" placeholder="添加备注信息"></textarea>
+            </div>
+          </div>
+
+          <!-- 表单按钮 -->
+          <div class="form-actions">
+            <button type="button" class="form-button form-button-secondary" id="form-cancel-button">取消</button>
+            <button type="submit" class="form-button form-button-primary">保存</button>
+          </div>
+        </form>
+      </div>
+      <!-- 模态框底部 -->
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑歌曲表单弹框 -->
+  <div class="modal-overlay" id="edit-song-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">编辑歌曲</h2>
+        <button class="modal-close" id="edit-modal-close-button">&times;</button>
+      </div>
+      <!-- 模态框主体内容 -->
+      <div class="modal-main">
+        <form id="edit-song-form">
+          <!-- 基本信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">基本信息</h3>
+            <div class="form-group">
+              <label for="song-title" class="form-label required">歌曲名称</label>
+              <div class="input-with-clear">
+                <input type="text" id="edit-song-title" class="form-input" placeholder="输入歌曲名称" required>
+                <button type="button" class="clear-button">&times;</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="song-language" class="form-label required">主要语言</label>
+              <select id="edit-song-language" class="form-select" required>
+                <option value="">选择语言</option>
+                <option value="中文">中文</option>
+                <option value="英语">英语</option>
+                <option value="日语">日语</option>
+                <option value="韩语">韩语</option>
+                <option value="未知">未知</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- 别名部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">别名</h3>
+            <div id="edit-aliases-container" class="array-container">
+              <!-- 别名项将通过JS动态添加 -->
+            </div>
+            <button type="button" class="add-array-button" id="edit-add-alias">
+              <i class="fas fa-plus"></i> 添加别名
+            </button>
+          </div>
+          
+          <!-- 主创信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">主创信息</h3>
+            <div class="form-group">
+              <label class="form-label required">演唱者</label>
+              <div id="edit-performers-container" class="array-container">
+                <div class="input-with-clear">
+                  <input type="text" class="form-input" name="performer" placeholder="输入演唱者姓名" required>
+                  <button type="button" class="clear-button">&times;</button>
+                </div>
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-performer">
+                <i class="fas fa-plus"></i> 添加演唱者
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">作词者</label>
+              <div id="edit-lyricists-container" class="array-container">
+                <!-- 作词者项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-lyricist">
+                <i class="fas fa-plus"></i> 添加作词者
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">作曲者</label>
+              <div id="edit-composers-container" class="array-container">
+                <!-- 作曲者项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-composer">
+                <i class="fas fa-plus"></i> 添加作曲者
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">编曲者</label>
+              <div id="edit-arrangers-container" class="array-container">
+                <!-- 编曲者项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-arranger">
+                <i class="fas fa-plus"></i> 添加编曲者
+              </button>
+            </div>
+          </div>
+          
+          <!-- 分类信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">分类信息</h3>  
+            <div class="form-group">
+              <label class="form-label required">语言</label>
+              <div id="edit-languages-container" class="array-container">
+                <!-- 语言项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-language">
+                <i class="fas fa-plus"></i> 添加语言
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">风格</label>
+              <div id="edit-genres-container" class="array-container">
+                <!-- 风格项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-genre">
+                <i class="fas fa-plus"></i> 添加风格
+              </button>
+            </div>
+          </div>
+          
+          <!-- 视频信息部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">视频信息</h3>
+            <div class="form-group">
+              <label class="form-label">视频</label>
+              <div id="edit-videos-container" class="array-container">
+                <!-- 视频项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-video">
+                <i class="fas fa-plus"></i> 添加视频
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">直播回放</label>
+              <div id="edit-lives-container" class="array-container">
+                <!-- 直播回放项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" class="add-array-button" id="edit-add-live">
+                <i class="fas fa-plus"></i> 添加直播回放
+              </button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">切片视频</label>
+              <div id="edit-clips-container" class="array-container">
+                <!-- 切片视频项将通过JS动态添加 -->
+              </div>
+              <button type="button" class="add-array-button" id="edit-add-clip">
+                <i class="fas fa-plus"></i> 添加切片视频
+              </button>
+            </div>
+          </div>
+          
+          <!-- 备注部分 -->
+          <div class="form-section">
+            <h3 class="form-section-title">备注</h3>
+            <div class="form-group">
+              <label for="song-note" class="form-label">备注信息</label>
+              <textarea id="edit-song-note" class="form-textarea" placeholder="添加备注信息"></textarea>
+            </div>
+          </div>
+          
+          <!-- 表单按钮 -->
+          <div class="form-actions">
+            <button type="button" class="form-button form-button-danger" id="delete-song-button">删除</button>
+            <button type="button" class="form-button form-button-secondary" id="edit-cancel-button">取消</button>
+            <button type="submit" class="form-button form-button-primary">修改</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 高级检索弹框 -->
+  <div class="modal-overlay" id="advanced-search-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">高级检索</h2>
+        <button class="modal-close" id="advanced-search-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <form id="advanced-search-form">
+          <div class="advanced-search-fields">
+            <div class="form-group">
+              <label for="as-title" class="form-label">歌名</label>
+              <input type="text" id="as-title" class="form-input" placeholder="歌曲名称">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-artist" class="form-label">歌手</label>
+              <input type="text" id="as-artist" class="form-input" placeholder="歌手姓名">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-lyricist" class="form-label">作词者</label>
+              <input type="text" id="as-lyricist" class="form-input" placeholder="作词者姓名">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-composer" class="form-label">作曲者</label>
+              <input type="text" id="as-composer" class="form-input" placeholder="作曲者姓名">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-arranger" class="form-label">编曲者</label>
+              <input type="text" id="as-arranger" class="form-input" placeholder="编曲者姓名">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-language" class="form-label">语言</label>
+              <select id="as-language" class="form-select">
+                <option value="">所有语言</option>
+                <option value="中文">中文</option>
+                <option value="英语">英语</option>
+                <option value="日语">日语</option>
+                <option value="韩语">韩语</option>
+                <option value="未知">未知</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="as-genre" class="form-label">风格</label>
+              <select id="as-genre" class="form-select">
+                <option value="">所有风格</option>
+                <option value="流行">流行</option>
+                <option value="民谣">民谣</option>
+                <option value="古风">古风</option>
+                <option value="儿歌">儿歌</option>
+                <option value="未知">未知</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="as-date-from" class="form-label">日期范围 (从)</label>
+              <input type="date" id="as-date-from" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-date-to" class="form-label">日期范围 (到)</label>
+              <input type="date" id="as-date-to" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-performance-min" class="form-label">演唱次数 (最少)</label>
+              <input type="number" id="as-performance-min" class="form-input" min="0" placeholder="0">
+            </div>
+            
+            <div class="form-group">
+              <label for="as-performance-max" class="form-label">演唱次数 (最多)</label>
+              <input type="number" id="as-performance-max" class="form-input" min="0" placeholder="无限制">
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="form-button form-button-secondary" id="advanced-search-cancel-button">取消</button>
+            <button type="submit" class="form-button form-button-primary">搜索</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 统计信息弹框 -->
+  <div class="modal-overlay" id="statistics-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">统计信息</h2>
+        <button class="modal-close" id="statistics-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <div class="chart-container">
+          <canvas id="language-chart"></canvas>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="form-button form-button-secondary" id="statistics-close-btn">关闭</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- 歌单表格 -->
-    <div class="table-container">
-      <table id="playlist-table">
-        <thead>
-          <tr>
-            <th data-sort="title">歌名<i class="sort-icon"></i></th>
-            <th data-sort="artist">歌手<i class="sort-icon"></i></th>
-            <th data-sort="language">语言<i class="sort-icon"></i></th> 
-            <th data-sort="genre">风格<i class="sort-icon"></i></th>
-            <th data-sort="audio">歌切<i class="sort-icon"></i></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+  <!-- 导入歌单弹框 -->
+  <div class="modal-overlay" id="import-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">导入歌单</h2>
+        <button class="modal-close" id="import-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <div class="import-options">
+          <div class="file-drop-area" id="file-drop-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3 class="file-drop-title">拖放文件到此处</h3>
+            <p class="file-drop-desc">支持 CSV 或 JSON 格式的歌单文件</p>
+            <div class="browse-button">选择文件</div>
+            <input type="file" id="file-input" class="file-input" accept=".csv,.json">
+          </div>
+          <div class="file-info" id="file-info">
+              <div class="file-info-header">
+                  <div class="file-info-name">
+                      <i class="fas fa-file"></i>
+                      <span id="file-name">未选择文件</span>
+                  </div>
+                  <div class="file-info-size" id="file-size">0 KB</div>
+              </div>
+              <div class="file-info-status" id="file-status"></div>
+          </div>
+          <div class="supported-formats">
+              <p>支持的格式: CSV (.csv), JSON (.json)</p>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="form-button form-button-secondary" id="import-cancel-button">取消</button>
+          <button type="button" class="form-button form-button-primary" id="import-confirm-button">导入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导出歌单弹框 -->
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">导出歌单</h2>
+        <button class="modal-close" id="export-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <div class="export-options">
+          <label class="export-option">
+            <input type="radio" name="export-format" value="csv" checked>
+            <div class="export-option-label">
+              <strong>导出为CSV</strong>
+              <div class="export-option-description">导出当前搜索结果的表格数据</div>
+            </div>
+          </label>
+          
+          <label class="export-option">
+            <input type="radio" name="export-format" value="json">
+            <div class="export-option-label">
+              <strong>导出为JSON</strong>
+              <div class="export-option-description">导出完整的歌单数据（包括所有字段）</div>
+            </div>
+          </label>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="form-button form-button-secondary" id="export-cancel-button">取消</button>
+          <button type="button" class="form-button form-button-primary" id="export-confirm-button">导出</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 表格设置弹框 -->
+  <div class="modal-overlay" id="table-settings-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">表格设置</h2>
+        <button class="modal-close" id="table-settings-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <div class="table-settings">
+          <div class="table-setting-item">
+            <div class="table-setting-label">
+              <strong>显示演唱次数列</strong>
+              <div>在表格中显示歌曲的演唱次数</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="show-performance-column" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="table-setting-item">
+            <div class="table-setting-label">
+              <strong>显示最近演唱日期列</strong>
+              <div>在表格中显示最近演唱日期</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="show-date-column" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="table-setting-item">
+            <div class="table-setting-label">
+              <strong>显示操作列</strong>
+              <div>在表格中显示操作按钮</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="show-action-column" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="form-button form-button-secondary" id="table-settings-cancel-button">取消</button>
+          <button type="button" class="form-button form-button-primary" id="table-settings-save-button">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认对话框 -->
+  <div class="modal-overlay" id="confirmation-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="confirmation-title">确认操作</h2>
+        <button class="modal-close" id="confirmation-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <div class="confirmation-dialog">
+          <p class="confirmation-message" id="confirmation-message">您确定要执行此操作吗？</p>
+          <div class="confirmation-buttons">
+            <button type="button" class="form-button form-button-secondary" id="confirmation-cancel-button">取消</button>
+            <button type="button" class="form-button form-button-primary" id="confirmation-confirm-button">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 主题切换按钮 -->
+  <button id="theme-toggle" class="floating-button theme-button" aria-label="切换主题">
+    <i class="fas fa-palette"></i>
+  </button>
+
+  <!-- 提示按钮 -->
+  <button id="tips-button" class="floating-button tips-button" aria-label="显示提示">
+    <i class="fas fa-question"></i>
+  </button>
+
+  <!-- 回到顶部按钮 -->
+  <button id="back-to-top" class="floating-button back-to-top-button" aria-label="回到顶部">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- 提示信息模态框 -->
+  <div class="modal-overlay" id="tips-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">使用提示</h2>
+        <button class="modal-close" id="tips-close-button">&times;</button>
+      </div>
+      <div class="modal-main">
+        <div class="tips-content">
+          <h3>歌单管理使用指南</h3>
+          <p>1. 使用搜索框可以快速查找歌曲或歌手</p>
+          <p>2. 使用语言和风格过滤器可以筛选特定类型的歌曲</p>
+          <p>3. 点击"添加歌曲"按钮可以添加新歌曲到歌单</p>
+          <p>4. 双击歌曲行或点击操作列的图标可以编辑歌曲信息</p>
+          <p>5. 使用高级搜索可以进行更精确的筛选</p>
+          <p>6. 点击表头可以按该列排序</p>
+          <p>7. 使用导入/导出功能可以备份或恢复歌单数据</p>
+          <p>8. 统计信息和表格设置功能还没做</p>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="form-button form-button-secondary" id="tips-close-btn">关闭</button>
+        </div>
+      </div>
     </div>
   </div>
   <script src="script.js"></script>
